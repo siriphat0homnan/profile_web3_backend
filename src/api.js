@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 const router = express.Router();
 
-const contractAddress = "0xdc35c71939AD0c4914fE241839f8A1a80b820EE9";
+const contractAddress = "0x164bb61E0F89b47EE6a945260424C26605973536";
 const web3 = new Web3("https://data-seed-prebsc-1-s1.binance.org:8545");
 const abi = require("../abi/profile.json");
 const contract = new web3.eth.Contract(abi, contractAddress);
@@ -20,6 +20,7 @@ router.get("/profile", (req, res) => {
             userInfo = await contract.methods
                 .profile(address)
                 .call({ from: address });
+            // education
             let educationCount = await contract.methods
                 .getEducationCount()
                 .call({ from: address });
@@ -31,10 +32,40 @@ router.get("/profile", (req, res) => {
                         .call({ from: address })
                 );
             }
+
+            // CompanyExperience
+            let companyExperienceCount = await contract.methods
+                .getCompanyExperienceCount()
+                .call({ from: address });
+            let companyExperience = [];
+            for (let index = 0; index < companyExperienceCount; index++) {
+                companyExperience.push(
+                    await contract.methods
+                        .getCompanyExperience(index)
+                        .call({ from: address })
+                );
+            }
+
+            // freelanceExperience
+            let freelanceExperienceCount = await contract.methods
+                .getFreelanceExperienceCount()
+                .call({ from: address });
+            let freelanceExperience = [];
+            for (let index = 0; index < freelanceExperienceCount; index++) {
+                freelanceExperience.push(
+                    await contract.methods
+                        .getFreelanceExperience(index)
+                        .call({ from: address })
+                );
+            }
+
+            // set data
             userInfo.educationCount = educationCount;
             userInfo.education = education;
-            // set data
-
+            userInfo.companyExperienceCount = companyExperienceCount;
+            userInfo.companyExperience = companyExperience;
+            userInfo.freelanceExperienceCount = freelanceExperienceCount;
+            userInfo.freelanceExperience = freelanceExperience;
             res.send(userInfo);
         } catch (error) {
             res.send(error);
