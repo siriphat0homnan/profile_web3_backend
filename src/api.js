@@ -12,9 +12,14 @@ const web3 = new Web3("https://data-seed-prebsc-1-s1.binance.org:8545");
 const abi = require("../abi/profile.json");
 const contract = new web3.eth.Contract(abi, contractAddress);
 
+router.get("/", (req, res) => {
+    res.json({ status: "Ok" });
+});
+
 router.get("/profile", (req, res) => {
     let address = req.query.address;
     let userInfo = {};
+
     new Promise(async () => {
         try {
             userInfo = await contract.methods
@@ -32,6 +37,7 @@ router.get("/profile", (req, res) => {
                         .call({ from: address })
                 );
             }
+            // console.log(userInfo);
 
             // CompanyExperience
             let companyExperienceCount = await contract.methods
@@ -74,5 +80,4 @@ router.get("/profile", (req, res) => {
 });
 
 app.use("/.netlify/functions/api", router);
-
 module.exports.handler = serverless(app);
