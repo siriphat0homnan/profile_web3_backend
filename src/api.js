@@ -2,7 +2,6 @@ const express = require("express");
 const serverless = require("serverless-http");
 const Web3 = require("web3");
 let cors = require("cors");
-
 const app = express();
 app.use(cors());
 const router = express.Router();
@@ -19,7 +18,6 @@ router.get("/", (req, res) => {
 router.get("/profile", (req, res) => {
     let address = req.query.address;
     let userInfo = {};
-
     new Promise(async () => {
         try {
             userInfo = await contract.methods
